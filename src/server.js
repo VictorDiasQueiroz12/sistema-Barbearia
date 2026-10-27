@@ -102,8 +102,13 @@ app.put('/barbeiro/:id',async (req, res) => {
 
 app.delete('/barbeiro/:id', async (req, res) => {
     const {id} = req.params
+
+    try{
     const deletarBarbeiro = await pool.query('DELETE FROM barbeiro WHERE id = $1 RETURNING *', [id])
     res.json(deletarBarbeiro.rows[0])
+    }catch(erro){
+            res.json({message: "Erro ao deletar barbeiro!"})
+        }
 })
 
 
