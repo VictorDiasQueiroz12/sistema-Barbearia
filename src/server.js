@@ -87,13 +87,17 @@ app.post('/barbeiro', async (req, res) => {
 app.put('/barbeiro/:id',async (req, res) => {
     const {id} = req.params
     const {nome, cpf, telefone} = req.body
-
+    
+    try{
     const cpfHash = await bcrypt.hash(cpf, SALT)
     const telefoneHash = await bcrypt.hash(telefone, SALT)
 
     const atualizarBarbeiro = await pool.query('UPDATE barbeiro SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpfHash, telefoneHash])
 
     res.json(atualizarBarbeiro.rows[0])
+    }catch(erro){
+            res.json({message: "Erro ao atualizar o barbeiro!"})
+        }
 })
 
 app.delete('/barbeiro/:id', async (req, res) => {
