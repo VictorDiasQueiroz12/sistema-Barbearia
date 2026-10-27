@@ -92,7 +92,7 @@ app.put('/barbeiro/:id',async (req, res) => {
     const cpfHash = await bcrypt.hash(cpf, SALT)
     const telefoneHash = await bcrypt.hash(telefone, SALT)
 
-    const atualizarBarbeiro = await pool.query('UPDATE barbeiro SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpfHash, telefoneHash])
+    const atualizarBarbeiro = await pool.query('UPDATE barbeiro SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpfHash, telefoneHash, id])
 
     res.json(atualizarBarbeiro.rows[0])
     }catch(erro){
