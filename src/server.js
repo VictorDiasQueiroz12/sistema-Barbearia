@@ -12,6 +12,8 @@ app.use(express.static('public'))
 
 const PORT = 3000
 
+const SALT = await bcrypt.genSalt(10)
+
 //LOGIN ROTAS
 
 app.post('/registro', async (req, res) => {
@@ -23,8 +25,7 @@ app.post('/registro', async (req, res) => {
             })
         }
         
-        const salt = await bcrypt.genSalt(10)
-        const senhaHash = await bcrypt.hash(senha, salt)
+        const senhaHash = await bcrypt.hash(senha, SALT)
         const novoUsuario = await pool.query("INSERT INTO usuario (nome, email, senha) VALUE ($1, $2, $3) RETURNING id, nome, login", [nome, login, senhaHash])
 
         res.json(novoUsuario.rows[0])
@@ -60,6 +61,27 @@ app.post('login', async (req, res) => {
             "nome": usuario.nome
         }
     })
+})
+
+//ROTAS BARBEIROS
+
+app.get('/barbeiro', async (req, res) => {
+    const barbeiros = await pool.query('SELECT id, nome, cpf, telefone FROM barbeiro')
+    res.json(barbeiros.rows)
+})
+
+app.post('/barbeiro', async (req, res) => {
+    const {nome, cpf, telefone} = req.body
+    try{
+        const cpfHash = await bcrypt.hash(cpf, SALT)
+        const telefoneHash = await bcrypt.hash(telefone, SALT)
+
+        const novoBarbeiro = await pool.query('INSERT INTO barbeiro (nome, cpf, telefone) VALUES ($1, $2, $3) RETURNING *', [nome, cpfHash, telefoneHash])
+
+        res.json(novoBarbeiro.rows[0])
+    }catch(erro){
+            res.json({message: "erro"})
+        }
 })
 
 
