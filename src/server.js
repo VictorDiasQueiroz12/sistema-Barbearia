@@ -34,6 +34,33 @@ app.post('/registro', async (req, res) => {
     }
 )
 
+app.post('login', async (req, res) => {
+    const {email, senha} = req.body
+    const resultado = await pool.query("SELECT * FROM usuario WHERE email = $1", [email])
+
+    if(resultado.rows.length === 0){
+        return res.status(401).json({
+            erro: "Email e senha inválidos!"
+        })
+    }
+
+    const usuario = resultado.rows[0]
+
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha)
+
+    if(!senhaCorreta){
+        return res.status(401).json({
+            erro: "Email e senha inválidos!"
+        })
+    }
+
+    return res.status(200).json({
+        message: "Login realizado com sucesso!",
+        user: {
+            "nome": usuario.nome
+        }
+    })
+})
 
 
 app.listen(PORT, () => {
