@@ -96,6 +96,11 @@ app.put('/barbeiro/:id',async (req, res) => {
     res.json(atualizarBarbeiro.rows[0])
 })
 
+app.delete('/barbeiro/:id', async (req, res) => {
+    const {id} = req.params
+    const deletarBarbeiro = await pool.query('DELETE FROM barbeiro WHERE id = $1 RETURNING *', [id])
+    res.json(deletarBarbeiro.rows[0])
+})
 
 
 app.listen(PORT, () => {
