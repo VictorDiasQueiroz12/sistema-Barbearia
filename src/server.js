@@ -80,7 +80,7 @@ app.post('/barbeiro', async (req, res) => {
 
         res.json(novoBarbeiro.rows[0])
     }catch(erro){
-            res.json({message: "erro"})
+            res.json({message: "Erro ao cadastrar barbeiro!"})
         }
 })
 
