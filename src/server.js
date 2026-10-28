@@ -3,10 +3,14 @@ import cors from "cors"
 import pool from "../db.js"
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
+import cookieParser from "cookie-parser"
 
 const app = express()
 
+const JWT_SECRET = "uiiPapaiCuidaaaa"
+
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors())
 app.use(express.static('public'))
 
@@ -14,6 +18,21 @@ const PORT = 3000
 
 const SALT = await bcrypt.genSalt(10)
 
+function autentificarToken(req, res, next){
+    const token = req.cookies.token
+
+    if(!token){
+        return res.status(401).json({message: "Acesso negado."})
+    }
+
+    try{
+        const usuarioJWT = jwt.verify(token, JWT_SECRET)
+        req.usuarioJWT = usuarioJWT
+        next()
+    }catch(erro){
+        return res.status(403).json({message: "Token inválido."})
+    }
+}
 //LOGIN ROTAS
 
 app.post('/registro', async (req, res) => {
@@ -125,7 +144,8 @@ app.get('/cliente', async (req, res) => {
     }
 })
 
-app.post('/cliente', async (req, res) => {
+app.put('/cliente/:id', async (req, res) => {
+    const {id} = req.params
     const {nome, cpf, telefone} = req.body
     try{
         const cpfHash = await bcrypt.hash(cpf, SALT)
