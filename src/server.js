@@ -1,7 +1,7 @@
 import express from "express"
 import cors from "cors"
 import pool from "../db.js"
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import jwt from "jsonwebtoken"
 import cookieParser from "cookie-parser"
 
@@ -33,8 +33,8 @@ function autentificarToken(req, res, next){
         return res.status(403).json({message: "Token inválido."})
     }
 }
-//LOGIN ROTAS
 
+//LOGIN ROTAS
 app.post('/registro', async (req, res) => {
     const {nome, email, senha} = req.body
     try{
@@ -75,6 +75,7 @@ app.post('login', async (req, res) => {
     }
 
     const token = jwt.sign(
+        //usando variavel que é o resultado
         {id: usuario.id, email: usuario.email},
         JWT_SECRET, 
         {expiresIn: "1h"}
@@ -96,7 +97,6 @@ app.post('login', async (req, res) => {
 })
 
 //ROTAS BARBEIROS
-
 app.get('/barbeiro', async (req, res) => {
     try{
     const barbeiros = await pool.query('SELECT id, nome, cpf, telefone FROM barbeiro')
@@ -193,6 +193,16 @@ app.delete('cliente/:id', async (req, res) => {
         res.json({message: "Erro ao deletar cliente!"})
     }
 })
+
+//ROTAS AGENDAMENTO
+app.get('agendamento', async (req, res) => {
+    try{
+        const servicos = await pool.query('SELECT id, nome, preco FROM agendamento')
+    }catch(erro){
+        res.json({message: "Erro ao consultar agendamentos!"})
+    }
+})
+
 
 
 app.listen(PORT, () => {
