@@ -203,6 +203,13 @@ app.get('agendamento', async (req, res) => {
     }
 })
 
+app.post('/agendamento', async (req, res) => {
+    const {data_agendamento, id_servico, id_cliente, id_barbeiro} = req.body
+    try{
+        const novoAgendamento = await pool.query('INSERT INTO agendamento (data_agendamento, id_servico, id_cliente, id_barbeiro) VALUES ($1, $2, $3, $4) RETURNING *', [data_agendamento, id_servico, id_cliente, id_barbeiro])
+        res.json(novoAgendamento.rows[0])
+    }
+})
 
 
 app.listen(PORT, () => {
