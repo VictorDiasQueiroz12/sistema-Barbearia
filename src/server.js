@@ -208,9 +208,22 @@ app.post('/agendamento', async (req, res) => {
     try{
         const novoAgendamento = await pool.query('INSERT INTO agendamento (data_agendamento, id_servico, id_cliente, id_barbeiro) VALUES ($1, $2, $3, $4) RETURNING *', [data_agendamento, id_servico, id_cliente, id_barbeiro])
         res.json(novoAgendamento.rows[0])
+    }catch(erro){
+        res.json({message: "Erro ao postar agendamento!"})
     }
 })
 
+app.put('/agendamento/:id', async (req, res) => {
+    const {id} = req.params
+    const {data_agendamento, id_servico, id_cliente, id_barbeiro} = req.body
+
+    try{
+        const atualizarAgendamento = await pool.query('UPDATE agendamento SET data_agendamento = $1, id_servico= $2, id_cliente = $3, id_barbeiro = $4 WHERE id = $5 RETURNING', [data_agendamento, id_servico, id_cliente, id_barbeiro, id])
+        res.json(atualizarAgendamento.rows[0])
+    }catch(erro){
+        res.json({message: "Erro ao atualizar agendamento!"})
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`)
