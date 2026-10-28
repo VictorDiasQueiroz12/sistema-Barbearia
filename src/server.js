@@ -45,7 +45,7 @@ app.post('/registro', async (req, res) => {
         }
         
         const senhaHash = await bcrypt.hash(senha, SALT)
-        const novoUsuario = await pool.query("INSERT INTO usuario (nome, email, senha) VALUE ($1, $2, $3) RETURNING id, nome, login", [nome, login, senhaHash])
+        const novoUsuario = await pool.query("INSERT INTO usuario (nome, email, senha) VALUES ($1, $2, $3) RETURNING nome, email, senha", [nome, email, senhaHash])
 
         res.json(novoUsuario.rows[0])
         }catch(erro){
@@ -54,7 +54,7 @@ app.post('/registro', async (req, res) => {
     }
 )
 
-app.post('login', async (req, res) => {
+app.post('/login', async (req, res) => {
     const {email, senha} = req.body
     const resultado = await pool.query("SELECT * FROM usuario WHERE email = $1", [email])
 
@@ -184,7 +184,7 @@ app.put('/cliente/:id', async (req, res) => {
     }
 })
 
-app.delete('cliente/:id', async (req, res) => {
+app.delete('/cliente/:id', async (req, res) => {
     const {id} = req.params
     try{
         const deletarCliente = await pool.query('DELETE FROM cliente WHERE id = $1 RETURNING *', [id])
@@ -195,7 +195,7 @@ app.delete('cliente/:id', async (req, res) => {
 })
 
 //ROTAS AGENDAMENTO
-app.get('agendamento', async (req, res) => {
+app.get('/agendamento', async (req, res) => {
     try{
         const servicos = await pool.query(`
             SELECT
@@ -235,7 +235,7 @@ app.put('/agendamento/:id', async (req, res) => {
     const {data_agendamento, id_servico, id_cliente, id_barbeiro} = req.body
 
     try{
-        const atualizarAgendamento = await pool.query('UPDATE agendamento SET data_agendamento = $1, id_servico= $2, id_cliente = $3, id_barbeiro = $4 WHERE id = $5 RETURNING', [data_agendamento, id_servico, id_cliente, id_barbeiro, id])
+        const atualizarAgendamento = await pool.query('UPDATE agendamento SET data_agendamento = $1, id_servico= $2, id_cliente = $3, id_barbeiro = $4 WHERE id = $5 RETURNING *', [data_agendamento, id_servico, id_cliente, id_barbeiro, id])
         res.json(atualizarAgendamento.rows[0])
     }catch(erro){
         res.json({message: "Erro ao atualizar agendamento!"})
