@@ -186,6 +186,12 @@ app.put('/cliente/:id', async (req, res) => {
 
 app.delete('cliente/:id', async (req, res) => {
     const {id} = req.params
+    try{
+        const deletarCliente = await pool.query('DELETE FROM cliente WHERE id = $1 RETURNING *', [id])
+        res.json(deletarCliente.rows[0])
+    }catch(erro){
+        res.json({message: "Erro ao deletar cliente!"})
+    }
 })
 
 
