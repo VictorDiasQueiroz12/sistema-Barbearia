@@ -66,8 +66,12 @@ app.post('login', async (req, res) => {
 //ROTAS BARBEIROS
 
 app.get('/barbeiro', async (req, res) => {
+    try{
     const barbeiros = await pool.query('SELECT id, nome, cpf, telefone FROM barbeiro')
     res.json(barbeiros.rows)
+    }catch(erro){
+        res.json({message: "Erro ao consultar clientes."})
+    }
 })
 
 app.post('/barbeiro', async (req, res) => {
