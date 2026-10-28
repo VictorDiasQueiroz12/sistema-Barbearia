@@ -197,9 +197,26 @@ app.delete('cliente/:id', async (req, res) => {
 //ROTAS AGENDAMENTO
 app.get('agendamento', async (req, res) => {
     try{
-        const servicos = await pool.query('SELECT id, nome, preco FROM agendamento')
+        const servicos = await pool.query(`
+            SELECT
+                agendamento.id,
+                TO_CHAR(agendamento.data_agendamento, 'YYYY-MM-DD') AS data_agendamento,
+                agendamento.id_servico,
+                servico.nome AS servico,
+                servico.preco,
+                agendamento.id_cliente,
+                cliente.nome AS cliente,
+                agendamento.id_barbeiro,
+                barbeiro.nome AS barbeiro
+            FROM agendamento
+            JOIN servico ON servico.id = agendamento.id_servico
+            JOIN cliente ON cliente.id = agendamento.id_cliente
+            JOIN barbeiro ON barbeiro.id = agendamento.id_barbeiro
+            ORDER BY agendamento.data_agendamento
+        `)
+        res.json(servicos.rows)
     }catch(erro){
-        res.json({message: "Erro ao consultar agendamentos!"})
+        res.status(500).json({message: "Erro ao consultar agendamentos!"})
     }
 })
 
@@ -222,6 +239,16 @@ app.put('/agendamento/:id', async (req, res) => {
         res.json(atualizarAgendamento.rows[0])
     }catch(erro){
         res.json({message: "Erro ao atualizar agendamento!"})
+    }
+})
+
+app.delete('/agendamento/:id', async (req, res) => {
+    const {id} = req.params
+    try{
+        const deletarAgendamento = await pool.query('DELETE FROM agendamento WHERE id = $1 RETURNING *', [id])
+        res.json(deletarAgendamento.rows[0])
+    }catch(erro){
+        res.json({message: "Erro ao deletar agendamento!"})
     }
 })
 

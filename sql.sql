@@ -28,7 +28,7 @@ preco int
 CREATE TABLE if not exists agendamento(
 id serial primary key,
 data_agendamento date not null,
-id_serviço int not null,
+id_servico int not null,
 id_cliente int not null,
 id_barbeiro int not null,
 foreign key (id_servico) references servico(id),
