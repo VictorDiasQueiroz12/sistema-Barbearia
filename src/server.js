@@ -144,6 +144,19 @@ app.get('/cliente', async (req, res) => {
     }
 })
 
+app.post('/cliente', async (req, res) => {
+    const {nome, cpf, telefone} = req.body
+    try{
+        const cpfHash = await bcrypt.hash(cpf, SALT)
+        const telefoneHash = await bcrypt.hash(telefone, SALT)
+
+        const novoCliente = await pool.query('INSERT INTO cliente (nome, cpf, telefone) VALUES ($1, $2, $3) RETURNING *', [nome, cpfHash, telefoneHash])
+        res.json(novoCliente.rows[0])
+    }catch(erro){
+        res.json({message: "Erro ao postar cliente!"})
+    }
+})
+
 app.put('/cliente/:id', async (req, res) => {
     const {id} = req.params
     const {nome, cpf, telefone} = req.body
