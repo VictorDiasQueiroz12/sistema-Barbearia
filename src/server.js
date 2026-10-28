@@ -74,6 +74,19 @@ app.post('login', async (req, res) => {
         })
     }
 
+    const token = jwt.sign(
+        {id: usuario.id, email: usuario.email},
+        JWT_SECRET, 
+        {expiresIn: "1h"}
+    )
+
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: false, //pra testar localmente
+        sameSite: "lax",
+        maxAge: 3600000
+    })
+
     return res.status(200).json({
         message: "Login realizado com sucesso!",
         user: {
@@ -171,7 +184,9 @@ app.put('/cliente/:id', async (req, res) => {
     }
 })
 
-
+app.delete('cliente/:id', async (req, res) => {
+    const {id} = req.params
+})
 
 
 app.listen(PORT, () => {
