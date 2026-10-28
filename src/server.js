@@ -121,9 +121,24 @@ app.get('/cliente', async (req, res) => {
     const clientes = await pool.query('SELECT id, nome, cpf, telefone FROM cliente')
     res.json(clientes.rows)
     }catch(erro){
-        res.json({message: "Erro ao consultar clientes."})
+        res.json({message: "Erro ao consultar clientes!"})
     }
 })
+
+app.post('/cliente', async (req, res) => {
+    const {nome, cpf, telefone} = req.body
+    try{
+        const cpfHash = await bcrypt.hash(cpf, SALT)
+        const telefoneHash = await bcrypt.hash(telefone, SALT)
+
+        const atualizarCliente = await pool.query('UPDATE cliente SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpfHash, telefoneHash, id])
+        res.json(atualizarCliente.rows[0])
+    }catch(erro){
+        res.json({message: "Erro ao atualizar cliente!"})
+    }
+})
+
+
 
 
 app.listen(PORT, () => {
