@@ -264,6 +264,17 @@ app.get('/servico', async (req, res) => {
     }
 })
 
+app.post('/servico', async (req, res) => {
+    const {nome, preco} = req.body 
+    try{
+        const novoServico = await pool.query("INSERT INTO servico (nome, preco) VALUES ($1, $2) RETURNING *", [nome, preco])
+        return res.status(200).json(novoServico.rows[0])
+    }catch(erro){
+        return res.status(400).json({
+            message: "Não foi possível cadastrar um novo serviço."
+        })
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`)
