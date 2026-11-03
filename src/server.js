@@ -252,6 +252,19 @@ app.delete('/agendamento/:id', async (req, res) => {
     }
 })
 
+//ROTAS SERVIÇOS
+app.get('/servico', async (req, res) => {
+    try{
+        const servicos = await pool.query("SELECT id, nome, preco FROM servico")
+        return res.status(200).json(servicos.rows)
+    }catch(erro){
+        return res.status(400).json({
+            message: "Erro ao consultar serviços."
+        })
+    }
+})
+
+
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`)
 })
