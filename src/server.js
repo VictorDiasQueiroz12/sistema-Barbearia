@@ -45,7 +45,7 @@ app.post('/registro', async (req, res) => {
         }
         
         const senhaHash = await bcrypt.hash(senha, SALT)
-        const novoUsuario = await pool.query("INSERT INTO usuario (nome, email, senha) VALUES ($1, $2, $3) RETURNING nome, email, senha", [nome, email, senhaHash])
+        const novoUsuario = await pool.query("INSERT INTO usuario (nome, email, senha) VALUES ($1, $2, $3) RETURNING id, nome, email", [nome, email, senhaHash])
 
         res.json(novoUsuario.rows[0])
         }catch(erro){
@@ -97,7 +97,7 @@ app.post('/login', async (req, res) => {
 })
 
 //ROTAS BARBEIROS
-app.get('/barbeiro', async (req, res) => {
+app.get('/barbeiro', autentificarToken, async (req, res) => {
     try{
     const barbeiros = await pool.query('SELECT id, nome, cpf, telefone FROM barbeiro')
     res.json(barbeiros.rows)
@@ -106,7 +106,7 @@ app.get('/barbeiro', async (req, res) => {
     }
 })
 
-app.post('/barbeiro', async (req, res) => {
+app.post('/barbeiro', autentificarToken, async (req, res) => {
     const {nome, cpf, telefone} = req.body
     try{
         const cpfHash = await bcrypt.hash(cpf, SALT)
@@ -120,7 +120,7 @@ app.post('/barbeiro', async (req, res) => {
         }
 })
 
-app.put('/barbeiro/:id',async (req, res) => {
+app.put('/barbeiro/:id', autentificarToken, async (req, res) => {
     const {id} = req.params
     const {nome, cpf, telefone} = req.body
     
@@ -136,7 +136,7 @@ app.put('/barbeiro/:id',async (req, res) => {
         }
 })
 
-app.delete('/barbeiro/:id', async (req, res) => {
+app.delete('/barbeiro/:id', autentificarToken, async (req, res) => {
     const {id} = req.params
 
     try{
@@ -148,7 +148,7 @@ app.delete('/barbeiro/:id', async (req, res) => {
 })
 
 //ROTA CLIENTES
-app.get('/cliente', async (req, res) => {
+app.get('/cliente', autentificarToken, async (req, res) => {
     try{
     const clientes = await pool.query('SELECT id, nome, cpf, telefone FROM cliente')
     res.json(clientes.rows)
@@ -157,7 +157,7 @@ app.get('/cliente', async (req, res) => {
     }
 })
 
-app.post('/cliente', async (req, res) => {
+app.post('/cliente', autentificarToken, async (req, res) => {
     const {nome, cpf, telefone} = req.body
     try{
         const cpfHash = await bcrypt.hash(cpf, SALT)
@@ -170,7 +170,7 @@ app.post('/cliente', async (req, res) => {
     }
 })
 
-app.put('/cliente/:id', async (req, res) => {
+app.put('/cliente/:id', autentificarToken, async (req, res) => {
     const {id} = req.params
     const {nome, cpf, telefone} = req.body
     try{
@@ -184,7 +184,7 @@ app.put('/cliente/:id', async (req, res) => {
     }
 })
 
-app.delete('/cliente/:id', async (req, res) => {
+app.delete('/cliente/:id', autentificarToken, async (req, res) => {
     const {id} = req.params
     try{
         const deletarCliente = await pool.query('DELETE FROM cliente WHERE id = $1 RETURNING *', [id])
@@ -195,7 +195,7 @@ app.delete('/cliente/:id', async (req, res) => {
 })
 
 //ROTAS AGENDAMENTO
-app.get('/agendamento', async (req, res) => {
+app.get('/agendamento', autentificarToken, async (req, res) => {
     try{
         const servicos = await pool.query(`
             SELECT
@@ -220,7 +220,7 @@ app.get('/agendamento', async (req, res) => {
     }
 })
 
-app.post('/agendamento', async (req, res) => {
+app.post('/agendamento', autentificarToken, async (req, res) => {
     const {data_agendamento, id_servico, id_cliente, id_barbeiro} = req.body
     try{
         const novoAgendamento = await pool.query('INSERT INTO agendamento (data_agendamento, id_servico, id_cliente, id_barbeiro) VALUES ($1, $2, $3, $4) RETURNING *', [data_agendamento, id_servico, id_cliente, id_barbeiro])
@@ -230,7 +230,7 @@ app.post('/agendamento', async (req, res) => {
     }
 })
 
-app.put('/agendamento/:id', async (req, res) => {
+app.put('/agendamento/:id', autentificarToken, async (req, res) => {
     const {id} = req.params
     const {data_agendamento, id_servico, id_cliente, id_barbeiro} = req.body
 
@@ -242,7 +242,7 @@ app.put('/agendamento/:id', async (req, res) => {
     }
 })
 
-app.delete('/agendamento/:id', async (req, res) => {
+app.delete('/agendamento/:id', autentificarToken, async (req, res) => {
     const {id} = req.params
     try{
         const deletarAgendamento = await pool.query('DELETE FROM agendamento WHERE id = $1 RETURNING *', [id])
@@ -253,7 +253,7 @@ app.delete('/agendamento/:id', async (req, res) => {
 })
 
 //ROTAS SERVIÇOS
-app.get('/servico', async (req, res) => {
+app.get('/servico', autentificarToken, async (req, res) => {
     try{
         const servicos = await pool.query("SELECT id, nome, preco FROM servico")
         return res.status(200).json(servicos.rows)
@@ -264,7 +264,7 @@ app.get('/servico', async (req, res) => {
     }
 })
 
-app.post('/servico', async (req, res) => {
+app.post('/servico', autentificarToken, async (req, res) => {
     const {nome, preco} = req.body 
     try{
         const novoServico = await pool.query("INSERT INTO servico (nome, preco) VALUES ($1, $2) RETURNING *", [nome, preco])
