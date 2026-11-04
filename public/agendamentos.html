@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento | Barbearia</title>
+</head>
+<body>
+    <header>
+        <h1>Barbearia</h1>
+        <nav>
+            <a href="cliente.html">clientes</a>
+            <a href="barbeiros.html">barbeiros</a>
+            <a href="servicos.html">Serviços</a>
+            <a href="agendamentos.html">Agendamento</a>
+        </nav>
+    </header><br>
+
+    <main>
+        <form action="">
+            <label for="data_agendamento">Data</label>
+            <input id="data_agendamento" name="data_agendamento" type="date" required>
+
+            <label for="id_cliente">Cliente</label>
+            <select name="id_cliente" id="id_cliente" required>
+                <option value="">Selecione um cliente</option>
+            </select>
+
+            <label for="id_barbeiro">Barbeiro</label>
+            <select name="id_barbeiro" id="id_barbeiro" required>
+                <option value="">Selecione um barbeiro</option>
+            </select>
+
+            <label for="id_servico">Serviço</label>
+            <select name="id_servico" id="id_servico">
+                <option value="">Selecione o serviço</option>
+            </select>
+
+            <button type="submit" disabled>Agendar</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Barbeiro</th>
+                    <th>Serviço</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="lista-agendamento"></tbody>
+        </table>
+    </main>
+</body>
+</html>
