@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes | Barbearia</title>
+</head>
+<body>
+    <header>
+        <h1>Barbearia</h1>
+        <nav>
+            <a href="cliente.html">Clientes</a>
+            <a href="barbeiros.html">Barbeiros</a>
+            <a href="servicos.html">Serviços</a>
+            <a href="agendamentos.html">Agendamentos</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Clientes</h2>
+            <h3>Novo Cadastro</h3>
+            <form action="">
+                <label for="nome">Nome</label>
+                <input type="text" name="nome" id="nome" maxlength="100" required>
+                <label for="cpf">CPF</label>
+                <input type="text" name="cpf" id="cpf" inputmode="numeric" required>]
+                <label for="telefone">Telefone</label>
+                <input type="tel" name="telefone" id="telefone" required>
+                <button type="submit" disabled>Salvar</button>
+            </form>
+    </main>
+
+    <table>
+        <caption>Lista de clientes</caption>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>Acões</th>
+            </tr>
+        </thead>
+        <tbody id="lista-clientes"></tbody>
+    </table>
+</body>
+</html>

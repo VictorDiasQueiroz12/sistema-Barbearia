@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços | Barbearia</title>
+</head>
+<body>
+    <header>
+        <h1>Barbearia</h1>
+        <nav>
+            <a href="cliente.html">Clientes</a>
+            <a href="barbeiros.html">Barbeiros</a>
+            <a href="servicos.html">Serviços</a>
+            <a href="agendamentos.html">Agendamentos</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Serviços</h2>
+            <h3>Novo Cadastro</h3>
+            <form action="">
+                <label for="nome">Nome</label>
+                <input type="text" name="nome" id="nome" maxlength="100" required>
+                <label for="preco">Preço</label>
+                <input type="number" name="preco" id="preco" min="0" step="1" required>
+                <button type="submit" disabled>Salvar</button>
+            </form>
+    </main>
+    
+    <table>
+        <caption>Lista de serviços</caption>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="lista-servico"></tbody>
+    </table>
+</body>
+</html>
