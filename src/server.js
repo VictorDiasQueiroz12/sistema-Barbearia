@@ -109,10 +109,8 @@ app.get('/barbeiro', autentificarToken, async (req, res) => {
 app.post('/barbeiro', autentificarToken, async (req, res) => {
     const {nome, cpf, telefone} = req.body
     try{
-        const cpfHash = await bcrypt.hash(cpf, SALT)
-        const telefoneHash = await bcrypt.hash(telefone, SALT)
 
-        const novoBarbeiro = await pool.query('INSERT INTO barbeiro (nome, cpf, telefone) VALUES ($1, $2, $3) RETURNING *', [nome, cpfHash, telefoneHash])
+        const novoBarbeiro = await pool.query('INSERT INTO barbeiro (nome, cpf, telefone) VALUES ($1, $2, $3) RETURNING *', [nome, cpf, telefone])
 
         res.json(novoBarbeiro.rows[0])
     }catch(erro){
@@ -125,10 +123,8 @@ app.put('/barbeiro/:id', autentificarToken, async (req, res) => {
     const {nome, cpf, telefone} = req.body
     
     try{
-    const cpfHash = await bcrypt.hash(cpf, SALT)
-    const telefoneHash = await bcrypt.hash(telefone, SALT)
 
-    const atualizarBarbeiro = await pool.query('UPDATE barbeiro SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpfHash, telefoneHash, id])
+    const atualizarBarbeiro = await pool.query('UPDATE barbeiro SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpf, telefone, id])
 
     res.json(atualizarBarbeiro.rows[0])
     }catch(erro){
@@ -160,10 +156,8 @@ app.get('/cliente', autentificarToken, async (req, res) => {
 app.post('/cliente', autentificarToken, async (req, res) => {
     const {nome, cpf, telefone} = req.body
     try{
-        const cpfHash = await bcrypt.hash(cpf, SALT)
-        const telefoneHash = await bcrypt.hash(telefone, SALT)
 
-        const novoCliente = await pool.query('INSERT INTO cliente (nome, cpf, telefone) VALUES ($1, $2, $3) RETURNING *', [nome, cpfHash, telefoneHash])
+        const novoCliente = await pool.query('INSERT INTO cliente (nome, cpf, telefone) VALUES ($1, $2, $3) RETURNING *', [nome, cpf, telefone])
         res.json(novoCliente.rows[0])
     }catch(erro){
         res.json({message: "Erro ao postar cliente!"})
@@ -174,10 +168,8 @@ app.put('/cliente/:id', autentificarToken, async (req, res) => {
     const {id} = req.params
     const {nome, cpf, telefone} = req.body
     try{
-        const cpfHash = await bcrypt.hash(cpf, SALT)
-        const telefoneHash = await bcrypt.hash(telefone, SALT)
 
-        const atualizarCliente = await pool.query('UPDATE cliente SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpfHash, telefoneHash, id])
+        const atualizarCliente = await pool.query('UPDATE cliente SET nome = $1, cpf = $2, telefone = $3 WHERE id = $4 RETURNING *', [nome, cpf, telefone, id])
         res.json(atualizarCliente.rows[0])
     }catch(erro){
         res.json({message: "Erro ao atualizar cliente!"})
@@ -273,6 +265,31 @@ app.post('/servico', autentificarToken, async (req, res) => {
         return res.status(400).json({
             message: "Não foi possível cadastrar um novo serviço."
         })
+    }
+})
+
+app.put('/servico/:id', autentificarToken, async (req, res) => {
+    const { id } = req.params
+    const { nome, preco } = req.body
+    try {
+        const resultado = await pool.query(
+            'UPDATE servico SET nome = $1, preco = $2 WHERE id = $3 RETURNING *',
+            [nome, preco, id]
+        )
+        if (!resultado.rows.length) return res.status(404).json({ message: "Serviço não encontrado." })
+        return res.json(resultado.rows[0])
+    } catch (erro) {
+        return res.status(400).json({ message: "Não foi possível atualizar o serviço." })
+    }
+})
+
+app.delete('/servico/:id', autentificarToken, async (req, res) => {
+    try {
+        const resultado = await pool.query('DELETE FROM servico WHERE id = $1 RETURNING *', [req.params.id])
+        if (!resultado.rows.length) return res.status(404).json({ message: "Serviço não encontrado." })
+        return res.json(resultado.rows[0])
+    } catch (erro) {
+        return res.status(400).json({ message: "Não foi possível excluir o serviço. Verifique se ele possui agendamentos." })
     }
 })
 
